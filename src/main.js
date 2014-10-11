@@ -19,6 +19,8 @@ building.units.push(new app.Unit("12", building, 400, 2000));
 building.units.push(new app.Unit("13", building, 800, 3000));
 building.units.push(new app.Unit("14", building, 1800, 4500));
 
+// building.addTenant("devin", "14");
+
 // --------------------------------
 menu.addDelimiter('-', 40, building.address + " rental app");
 
@@ -154,50 +156,96 @@ menu.addItem('(implement me) Move tenant in unit',
 
 menu.addItem('(implement me) Evict tenant', 
   function(tenant_name) {
-      // Similar to above, use building's removeTenant() function.
+    // Similar to above, use building's removeTenant() function.
+    // console.log("Implement me");
+    var evictTenant;
+    
+    people.forEach(function(person){
+      if(tenant_name == person.name){
+        console.log("Found tenant");
+        evictTenant = person;
+      }
+    });
+
+    building.units.forEach(function(unit){
+      if((evictTenant == unit.tenant)){
+        console.log("Found unit");
+        building.removeTenant(unit, evictTenant);
+      }
+    });
+  },
+  null, 
+  [{'name': 'tenant_name', 'type': 'string'}] 
+);
+
+//evict tenant 1st version using for loop.
+// menu.addItem('Evict tenant', 
+//   function(tenant_name) {
+
+//     var unitEvictTenant;
+//     var evictTenant;
+//       //go through the tenants and check tenant_name is in the people array
+//       //we want to store the object we get
+//     for (var i = 0; i <people.length; i++) {
+//        if(tenant_name == people[i].name) {
+//         evictTenant = people[i];
+//         }
+//     }
+//     for (var i =0; i < building.units.length; i++) {
+//       if((evictTenant == building.units[i].tenant)){
+//         unitEvictTenant = building.units[i]; 
+//         building.removeTenant(unitEvictTenant, evictTenant);
+//       }
+//     }
+//       //go through the units and see which unit the tenant is in
+//       //set the tenant onject within the unit to null
+//       //Similar to above, use building's removeTenant() function.
+//       console.log("Implement me");
+//     },
+//     null, 
+//     [{'name': 'tenant_name', 'type': 'string'}] 
+// );
+
+menu.addItem('Show total sqft rented', 
+  function() {
+    var rentedSqft = 0;
+    building.units.forEach(function(unit) {
+      rentedSqft = rentedSqft + unit.sqft;
+    });
+    console.log(rentedSqft);
+    return rentedSqft;
+    // console.log("Implement me");
+  }
+);
+
+menu.addItem('Show total yearly income', 
+ function() {
+    var rent = 0;
+    building.units.forEach(function(unit) {
+      if(unit.available()){
+      rent = rent + unit.rent;
+      }
+    });
+    console.log(rent);
+    return rent;
+    // console.log("Implement me");
+  }
+);
+
+menu.addItem('Show rented(unavailable) units', 
+      function() {
       // console.log("Implement me");
-
-      var unitEvictTenant = null;
-      var evictTenant = null;
-
-      for (var i =0; i < building.units.length; i++) {
-        if((unit_number == building.units[i].number && building.units[i].available())){
-          console.log("Found unit");
-          unitNewTenant = building.units[i];
-        }
-      }
-
-      for (var i =0; i < people.length; i++) {
-        if(tenant_name === people[i].name){
-          console.log("Found tenant");
-          evictTenant = people[i];
-        }
-      }
-      
-      unitNewTenant.removeTenant = ;
-    },
-    null, 
-    [{'name': 'tenant_name', 'type': 'string'}] 
+      var unavailable = building.rentedUnits();
+      for (var i =0; i<unavailable.length;i++) {
+        console.log(" tenant: " + unavailable[i].tenant +
+              " num: " + unavailable[i].number + 
+              " sqft: " + unavailable[i].sqft +
+               " rent: $" + unavailable[i].rent);
+             }
+          }
 );
 
-menu.addItem('(implement me) Show total sqft rented', 
-  function() {
-      console.log("Implement me");
-    } 
-);
-
-menu.addItem('(implement me) Show total yearly income', 
-  function() {
-      // Note: only rented units produce income
-      console.log("Implement me.");
-    } 
-);
-
-menu.addItem('(Add your own feature ...)', 
-  function() {
-      console.log("Implement a feature that you find is useful");
-    } 
-);
+    // console.log("Implement a feature that you find is useful");
 
 // *******************************
 menu.addDelimiter('*', 40);
